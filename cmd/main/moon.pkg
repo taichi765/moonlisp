@@ -1,0 +1,7 @@
+import {
+  "taichi765/moonlisp" @lib,
+}
+
+options(
+  "is-main": true,
+)
