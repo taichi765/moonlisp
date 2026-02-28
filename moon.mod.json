@@ -1,10 +1,13 @@
 {
   "name": "taichi765/moonlisp",
   "version": "0.1.0",
-  "deps": {},
+  "deps": {
+    "mizchi/cst": "0.1.4"
+  },
   "readme": "README.mbt.md",
   "repository": "",
   "license": "Apache-2.0",
   "keywords": [],
-  "description": ""
+  "description": "",
+  "preferred-target": "wasm-gc"
 }
