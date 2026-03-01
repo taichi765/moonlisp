@@ -1,21 +1,23 @@
 ///|
-pub struct Env {
-  current : Map[String, Value]
-  parent : Env?
+pub struct Env[T] {
+  current : Map[String, T]
+  parent : Env[T]?
 }
 
 ///|
-fn Env::new(parent : Env?) -> Env {
+#warnings("-unused_value")
+fn[T] Env::new(parent : Env[T]?) -> Env[T] {
   Env::{ current: Map::new(), parent }
 }
 
 ///|
-fn Env::def(self : Self, k : String, v : Value) -> Unit {
+#warnings("-unused_value")
+fn[T] Env::def(self : Self[T], k : String, v : T) -> Unit {
   self.current.set(k, v)
 }
 
 ///|
-suberror KeyNotFoundError
+priv suberror KeyNotFoundError
 
 ///|
 /// Updates the value associated with a key in the environment, searching up the
@@ -24,7 +26,7 @@ suberror KeyNotFoundError
 /// Throws an error of type `KeyNotFoundError` if the key is not found in this
 /// environment or any of its parent environments.
 ///
-pub fn Env::set(self : Self, k : String, v : Value) -> Unit raise {
+pub fn[T] Env::set(self : Self[T], k : String, v : T) -> Unit raise {
   if self.current.contains(k) {
     self.current.set(k, v)
   } else if self.parent is Some(e) {
@@ -35,7 +37,7 @@ pub fn Env::set(self : Self, k : String, v : Value) -> Unit raise {
 }
 
 ///|
-pub fn Env::get(self : Self, k : String) -> Value? {
+pub fn[T] Env::get(self : Self[T], k : String) -> T? {
   if self.current.get(k) is Some(v) {
     Some(v)
   } else if self.parent is Some(e) {
@@ -46,7 +48,7 @@ pub fn Env::get(self : Self, k : String) -> Value? {
 }
 
 ///|
-pub fn Env::contains(self : Self, k : String) -> TBool {
+pub fn[T] Env::contains(self : Self[T], k : String) -> Bool {
   if self.current.contains(k) {
     true
   } else if self.parent is Some(e) {
@@ -57,6 +59,6 @@ pub fn Env::contains(self : Self, k : String) -> TBool {
 }
 
 ///|
-pub fn Env::refer(_self : Self) -> Unit {
+pub fn[T] Env::refer(_self : Self[T]) -> Unit {
   // TODO
 }

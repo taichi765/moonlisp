@@ -1,13 +1,55 @@
 ///|
+/// Tokenize entire input
+pub fn tokenize(input : String) -> Array[Token] {
+  let lexer = Lexer::new(input)
+  let tokens : Array[Token] = []
+  while not(lexer.is_eof()) {
+    tokens.push(lexer.next_token())
+  }
+  tokens.push(Token::new(EOF))
+  tokens
+}
+
+///|
+pub(all) enum TokenKind {
+  EOF
+  Error
+  LParen
+  RParen
+  LBrack
+  RBrack
+  Dot
+  Quote
+  QuasiQuote
+  Unquote
+  UnquoteSplicing
+  True
+  False
+  Num
+  Sym
+  Str
+} derive(Show, Eq)
+
+///|
 /// Token produced by the lexer
 pub struct Token {
-  kind : @cst.SyntaxKind
+  kind : TokenKind
   text : String
 } derive(Show, Eq)
 
 ///|
-pub fn Token::new(kind : @cst.SyntaxKind, text? : String = "") -> Token {
+pub fn Token::new(kind : TokenKind, text? : String = "") -> Token {
   Token::{ kind, text }
+}
+
+///|
+pub fn Token::kind(self : Self) -> TokenKind {
+  self.kind
+}
+
+///|
+pub fn Token::text(self : Self) -> String {
+  self.text
 }
 
 ///|
@@ -98,7 +140,7 @@ fn Lexer::slice_from(self : Lexer, start : Int) -> String {
 /// Lex a single token
 pub fn Lexer::next_token(self : Lexer) -> Token {
   match self.peek() {
-    None => Token::new(eof())
+    None => Token::new(EOF)
     Some(c) =>
       match c {
         c if is_whitespace_char(c) => {
@@ -107,48 +149,48 @@ pub fn Lexer::next_token(self : Lexer) -> Token {
         }
         '(' => {
           let _ = self.advance()
-          return Token::new(lparen())
+          return Token::new(LParen)
         }
         ')' => {
           let _ = self.advance()
-          return Token::new(rparen())
+          return Token::new(RParen)
         }
         '[' => {
           let _ = self.advance()
-          return Token::new(lbrack())
+          return Token::new(LBrack)
         }
         ']' => {
           let _ = self.advance()
-          return Token::new(rblack())
+          return Token::new(RBrack)
         }
         '.' => {
           let _ = self.advance()
-          return Token::new(dot())
+          return Token::new(Dot)
         }
         '#' => {
           let _ = self.advance()
           return match self.peek() {
-            Some('t') => Token::new(true_())
-            Some('f') => Token::new(false_())
+            Some('t') => Token::new(True)
+            Some('f') => Token::new(False)
             c =>
               Token::new(
-                error(),
+                Error,
                 text="unexpected character after '#': " + c.to_string(),
               )
           }
         }
         '\'' => {
           let _ = self.advance()
-          return Token::new(quote())
+          return Token::new(Quote)
         }
-        '`' => return Token::new(quasi_quote())
+        '`' => return Token::new(QuasiQuote)
         ',' => {
           let _ = self.advance()
           return if self.peek() == Some('@') {
             let _ = self.advance()
-            Token::new(unquote_splicing())
+            Token::new(UnquoteSplicing)
           } else {
-            Token::new(unquote())
+            Token::new(Unquote)
           }
         }
         c if is_special(c) || is_alphabet(c) => {
@@ -160,7 +202,7 @@ pub fn Lexer::next_token(self : Lexer) -> Token {
             let _ = self.advance()
           }
           let text = self.slice_from(start)
-          return Token::new(sym(), text~)
+          return Token::new(Sym, text~)
         }
         c if is_digit(c) => {
           let start = self.pos
@@ -171,7 +213,7 @@ pub fn Lexer::next_token(self : Lexer) -> Token {
             let _ = self.advance()
           }
           let text = self.slice_from(start)
-          return Token::new(num(), text~)
+          return Token::new(Num, text~)
         }
         '"' => {
           let start = self.pos
@@ -182,14 +224,14 @@ pub fn Lexer::next_token(self : Lexer) -> Token {
             let _ = self.advance()
             if c == '"' {
               let text = self.slice_from(start)
-              return Token::new(str(), text~) // TODO: エスケープなど
+              return Token::new(Str, text~) // TODO: エスケープなど
             }
           }
-          return Token::new(eof())
+          return Token::new(EOF)
         }
         c => {
           let _ = self.advance()
-          return Token::new(error(), text="unknow character" + c.to_string())
+          return Token::new(Error, text="unknow character" + c.to_string())
         }
       }
   }
@@ -199,16 +241,4 @@ pub fn Lexer::next_token(self : Lexer) -> Token {
 /// Check if lexer is at end
 pub fn Lexer::is_eof(self : Lexer) -> Bool {
   self.pos >= self.source.length()
-}
-
-///|
-/// Tokenize entire input
-pub fn tokenize(input : String) -> Array[Token] {
-  let lexer = Lexer::new(input)
-  let tokens : Array[Token] = []
-  while not(lexer.is_eof()) {
-    tokens.push(lexer.next_token())
-  }
-  tokens.push(Token::new(eof()))
-  tokens
 }

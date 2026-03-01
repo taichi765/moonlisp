@@ -3,10 +3,6 @@
 /// Keep main focused; move logic into the library package.
 /// Run with `moon run cmd/main` from the project root.
 fn main {
-  @lib.run_test()
-}
-
-///|
-fn parse() -> Unit {
-
+  println("hello")
+  //@core.run_test()
 }

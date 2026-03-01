@@ -1,5 +1,5 @@
 import {
-  "taichi765/moonlisp" @lib,
+  "taichi765/moonlisp" @core,
 }
 
 options(

@@ -2,10 +2,10 @@
   "name": "taichi765/moonlisp",
   "version": "0.1.0",
   "deps": {
-    "mizchi/cst": "0.1.4"
+    "moonbitlang/x": "0.4.40"
   },
   "readme": "README.mbt.md",
-  "repository": "",
+  "repository": "https://github.com/taichi765/moonlisp",
   "license": "Apache-2.0",
   "keywords": [],
   "description": "",

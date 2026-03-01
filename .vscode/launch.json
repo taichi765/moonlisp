@@ -1,7 +1,7 @@
 {
   "configurations": [
     // If you already have some configurations, you can paste the following object into them
-    {
+    /*{
       "type": "lldb",
       "request": "launch",
       "name": "LLDB Debug",
@@ -13,6 +13,6 @@
         // Adjust according to your MoonBit toolchain installation path
         "command script import ~/.moon/share/lldb/moonbit.py"
       ]
-    }
+    }*/
   ]
 }
